@@ -6,9 +6,9 @@ include:
   - epel
   - postgres.upstream
 
-logilab_extranet:
+logilab repository:
   pkgrepo.managed:
-    - humanname: Logilab extranet BRDX $releasever $basearch
-    - baseurl: https://extranet.logilab.fr/static/BRDX/rpms/epel-$releasever-$basearch
+    - humanname: Logilab free software repository $releasever $basearch
+    - baseurl: http://download.logilab.org/rpms/acceptance/epel-$releasever-$basearch
     - gpgcheck: 0
 {% endif %}

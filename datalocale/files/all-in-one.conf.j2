@@ -1,4 +1,4 @@
-{%- from "saemref/map.jinja" import saemref with context -%}
+{%- from "datalocale/map.jinja" import datalocale with context -%}
 {%- macro config(key, value) -%}
 {%- if value -%}
 {{ key }}={{ value }}
@@ -42,7 +42,7 @@ smtp-host=mail
 smtp-port=25
 
 # name used as HELO name for outgoing emails from the repository.
-sender-name={{ saemref.instance.user }}
+sender-name={{ datalocale.instance.user }}
 
 # email address used as HELO address for outgoing emails from the repository
 sender-addr=cubicweb@mydomain.com
@@ -69,7 +69,7 @@ gmap-key=
 #host=
 
 # repository's pid file
-pid-file=/tmp/{{ saemref.instance.name }}-all-in-one.pid
+pid-file=/tmp/{{ datalocale.instance.name }}-all-in-one.pid
 
 # if this option is set, use the specified user to start the repository rather
 # than the user running the command
@@ -114,13 +114,13 @@ log-threshold=WARNING
 umask=63
 
 # web server root url
-{{ config('base-url', saemref.instance.base_url) }}
+{{ config('base-url', datalocale.instance.base_url) }}
 
 # allow users to login with their primary email if set
 allow-email-login=no
 
 # file where output logs should be written
-log-file=/tmp/{{ saemref.instance.name }}-all-in-one.log
+log-file=/tmp/{{ datalocale.instance.name }}-all-in-one.log
 
 # UDP address of the statsd endpoint; it must be formattedlike <ip>:<port>;
 # disabled is unset.
@@ -131,13 +131,13 @@ statsd-endpoint=
 logstat-interval=0
 
 # file where stats for the instance should be written
-logstat-file=/tmp/{{ saemref.instance.name }}-all-in-one.stats
+logstat-file=/tmp/{{ datalocale.instance.name }}-all-in-one.stats
 
 
 [WEB]
 
 # http server port number (default to 8080)
-{{ config('port', saemref.instance.port) }}
+{{ config('port', datalocale.instance.port) }}
 
 # http server address on which to listen (default to everywhere)
 interface=
@@ -157,11 +157,11 @@ repository-uri=inmemory://
 
 # login of the CubicWeb user account to use for anonymous user (if you want to
 # allow anonymous)
-{{ config('anonymous-user', saemref.instance.anonymous_user) }}
+{{ config('anonymous-user', datalocale.instance.anonymous_user) }}
 
 # password of the CubicWeb user account to use for anonymous user, if
 # anonymous-user is set
-{{ config('anonymous-password', saemref.instance.anonymous_password) }}
+{{ config('anonymous-password', datalocale.instance.anonymous_password) }}
 
 # web instance query log file
 #query-log-file=

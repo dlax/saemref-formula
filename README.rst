@@ -1,11 +1,11 @@
-.. image:: https://travis-ci.org/logilab/saemref-formula.svg?branch=master
-    :target: https://travis-ci.org/logilab/saemref-formula
+.. image:: https://travis-ci.org/logilab/datalocale-formula.svg?branch=master
+    :target: https://travis-ci.org/logilab/datalocale-formula
 
 ===============
-saemref-formula
+datalocale-formula
 ===============
 
-A saltstack formula handling installation of `saem_ref`_.
+A saltstack formula handling installation of `datalocale`_.
 
 Available states
 ================
@@ -13,50 +13,50 @@ Available states
 .. contents::
     :local:
 
-``saemref``
+``datalocale``
 -----------
 
-Equivalent to ``saemref.install`` and ``saemref.config``.
+Equivalent to ``datalocale.install`` and ``datalocale.config``.
 
-``saemref.install``
+``datalocale.install``
 -------------------
 
-Installs the saemref package from logilab repositories and create an instance
-for user ``saemref``.
+Installs the datalocale package from logilab repositories and create an instance
+for user ``datalocale``.
 
-Cubicweb config files are located in ``~saemref/etc/cubicweb.d/saemref`` and
-``cubicweb-ctl`` can be invoked as user ``saemref`` with environment variable
+Cubicweb config files are located in ``~datalocale/etc/cubicweb.d/datalocale`` and
+``cubicweb-ctl`` can be invoked as user ``datalocale`` with environment variable
 ``CW_MODE=user``.
 
 The state require the installation of `epel-formula`_ and `postgres-formula`_
 with ``postgres.lookup.version: 9.4`` (see ``pillar.example``).
 
-``saemref.config``
+``datalocale.config``
 ------------------
 
 Only manage instance configuration files.
 
-``saemref.db-create``
+``datalocale.db-create``
 ---------------------
 
 Create instance database with ``cubicweb-ctl db-create`` (call implicitly ``db-init``).
 
-``saemref.db-init``
+``datalocale.db-init``
 ---------------------
 
 Initialize instance database schema with ``cubicweb-ctl db-init``.
 
-``saemref.supervisor``
+``datalocale.supervisor``
 ----------------------
 
-Install and manage `supervisor`_ configuration for the saemref installation.
+Install and manage `supervisor`_ configuration for the datalocale installation.
 
 +----------+-----------------------------------------------------+-------------------------------------+
 | OS       | Restart instance                                    | Restart supervisor                  |
 +==========+=====================================================+=====================================+
-| Centos 6 | ``su - saemref -c 'supervisorctl restart saemref'`` | ``/etc/init.d/supervisord restart`` |
+| Centos 6 | ``su - datalocale -c 'supervisorctl restart datalocale'`` | ``/etc/init.d/supervisord restart`` |
 +----------+-----------------------------------------------------+-------------------------------------+
-| Centos 7 | ``supervisorctl restart saemref``                   | ``systemctl restart supervisord``   |
+| Centos 7 | ``supervisorctl restart datalocale``                   | ``systemctl restart supervisord``   |
 +----------+-----------------------------------------------------+-------------------------------------+
 
 Requirements
@@ -87,7 +87,7 @@ Note that you can add any parameters that testinfra (pytest) accept, for
 instance ``./run-test.py test centos6 -k idempotence --pdb``.
 
 
-.. _saem_ref: https://www.cubicweb.org/project/cubicweb-saem_ref
+.. _datalocale: https://www.cubicweb.org/project/cubicweb-datalocale
 .. _supervisor: http://supervisord.org
 .. _docker: https://www.docker.com/
 .. _testinfra: https://testinfra.readthedocs.org/

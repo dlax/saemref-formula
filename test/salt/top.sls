@@ -1,4 +1,4 @@
 base:
   '*':
-    - saemref.db-create
-    - saemref.supervisor
+    - datalocale.db-create
+    - datalocale.supervisor

@@ -7,7 +7,7 @@ import subprocess
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-_formula = "saemref"
+_formula = "datalocale"
 _images = ["centos6", "centos7"]
 
 

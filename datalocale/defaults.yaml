@@ -1,7 +1,7 @@
-saemref:
+datalocale:
   instance:
-    name: saemref
-    user: saemref
+    name: datalocale
+    user: datalocale
     base_url:
     port:
     anonymous_user:
@@ -10,9 +10,9 @@ saemref:
     driver: postgres
     host: ""
     port: ""
-    name: saemref
-    user: saemref
-    pass: saemref
+    name: datalocale
+    user: datalocale
+    pass: datalocale
   admin:
     login: admin
     pass: admin

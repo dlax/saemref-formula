@@ -5,7 +5,7 @@ import time
 import pytest
 
 wait_supervisord_started = pytest.mark.usefixtures("_wait_supervisord_started")
-wait_saemref_started = pytest.mark.usefixtures("_wait_saemref_started")
+wait_datalocale_started = pytest.mark.usefixtures("_wait_datalocale_started")
 
 
 @pytest.fixture
@@ -19,11 +19,11 @@ def _wait_supervisord_started(Service):
 
 
 @pytest.fixture
-def _wait_saemref_started(Command, _wait_supervisord_started, is_centos6):
+def _wait_datalocale_started(Command, _wait_supervisord_started, is_centos6):
     if is_centos6:
-        cmd = "su - saemref -c 'supervisorctl status saemref'"
+        cmd = "su - datalocale -c 'supervisorctl status datalocale'"
     else:
-        cmd = "supervisorctl status saemref"
+        cmd = "supervisorctl status datalocale"
     for _ in range(20):
         status = Command.check_output(cmd).split()
         if status[1] == "RUNNING":
@@ -32,7 +32,7 @@ def _wait_saemref_started(Command, _wait_supervisord_started, is_centos6):
             assert status[1] in ("STARTING", "BACKOFF")
         time.sleep(1)
     else:
-        raise RuntimeError("No running saemref")
+        raise RuntimeError("No running datalocale")
 
 
 @pytest.fixture
@@ -42,7 +42,7 @@ def is_centos6(SystemInfo):
 
 @pytest.mark.parametrize("name, version", [
     ("cubicweb", "3.22.2"),
-    ("cubicweb-saem-ref", "0.11.1"),
+    ("cubicweb-datalocale", "0.1.0"),
 ])
 def test_packages(Package, name, version):
     pkg = Package(name)
@@ -53,8 +53,8 @@ def test_packages(Package, name, version):
 @wait_supervisord_started
 @pytest.mark.parametrize("state, exclude", [
     # FIXME: Contain container IP...
-    ("saemref", ["/home/saemref/etc/cubicweb.d/saemref/all-in-one.conf"]),
-    ("saemref.supervisor", []),
+    ("datalocale", ["/home/datalocale/etc/cubicweb.d/datalocale/all-in-one.conf"]),
+    ("datalocale.supervisor", []),
 ])
 @pytest.mark.destructive()
 def test_idempotence(Salt, state, exclude):
@@ -74,23 +74,23 @@ def test_idempotence(Salt, state, exclude):
         assert item["changes"] == {}
 
 
-@wait_saemref_started
-def test_saemref_running(Process, Service, Socket, Command, is_centos6):
+@wait_datalocale_started
+def test_datalocale_running(Process, Service, Socket, Command, is_centos6):
     assert Service("supervisord").is_enabled
 
     supervisord = Process.get(comm="supervisord")
 
     if is_centos6:
-        assert supervisord.user == "saemref"
-        assert supervisord.group == "saemref"
+        assert supervisord.user == "datalocale"
+        assert supervisord.group == "datalocale"
     else:
         assert supervisord.user == "root"
         assert supervisord.group == "root"
 
     cubicweb = Process.get(ppid=supervisord.pid)
     assert cubicweb.comm == "cubicweb-ctl"
-    assert cubicweb.user == "saemref"
-    assert cubicweb.group == "saemref"
+    assert cubicweb.user == "datalocale"
+    assert cubicweb.group == "datalocale"
 
     assert Socket("tcp://0.0.0.0:8080").is_listening
 

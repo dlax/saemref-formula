@@ -1,34 +1,34 @@
-{% from "saemref/map.jinja" import saemref with context %}
+{% from "datalocale/map.jinja" import datalocale with context %}
 [admin]
 
 # cubicweb manager account's login (this user will be created)
-login={{ saemref.admin.login }}
+login={{ datalocale.admin.login }}
 
 # cubicweb manager account's password
-password={{ saemref.admin.pass }}
+password={{ datalocale.admin.pass }}
 
 [system]
 
 # database driver (postgres, sqlite, sqlserver2005)
-db-driver={{ saemref.db.driver }}
+db-driver={{ datalocale.db.driver }}
 
 # database host
-db-host={{ saemref.db.host }}
+db-host={{ datalocale.db.host }}
 
 # database port
-db-port={{ saemref.db.port }}
+db-port={{ datalocale.db.port }}
 
 # database name
-db-name={{ saemref.db.name }}
+db-name={{ datalocale.db.name }}
 
 # database namespace (schema) name
 db-namespace=
 
 # database user
-db-user={{ saemref.db.user }}
+db-user={{ datalocale.db.user }}
 
 # database password
-db-password={{ saemref.db.pass }}
+db-password={{ datalocale.db.pass }}
 
 # database encoding
 db-encoding=utf8

@@ -1,4 +1,4 @@
-saemref formula
+datalocale formula
 ===============
 
 0.1.0

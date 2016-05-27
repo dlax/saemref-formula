@@ -1,7 +1,7 @@
-{% from "saemref/map.jinja" import saemref, supervisor_confdir, supervisor_conffile with context %}
+{% from "datalocale/map.jinja" import datalocale, supervisor_confdir, supervisor_conffile with context %}
 
 include:
-  - saemref.install
+  - datalocale.install
 
 {% if grains['os_family'] == 'RedHat' and grains['osmajorrelease'] == '6' %}
 
@@ -11,18 +11,18 @@ python-pip:
 
 supervisor:
   pip.installed:
-    - user: {{ saemref.instance.user }}
+    - user: {{ datalocale.instance.user }}
     - install_options:
       - "--user"
     - require:
-      - user: {{ saemref.instance.user }}
+      - user: {{ datalocale.instance.user }}
       - pkg: python-pip
 
 {% for fname in ('supervisorctl', 'supervisord') %}
-/home/{{ saemref.instance.user }}/bin/{{ fname }}:
+/home/{{ datalocale.instance.user }}/bin/{{ fname }}:
   file.symlink:
-    - target: /home/{{ saemref.instance.user }}/.local/bin/{{ fname }}
-    - user: {{ saemref.instance.user }}
+    - target: /home/{{ datalocale.instance.user }}/.local/bin/{{ fname }}
+    - user: {{ datalocale.instance.user }}
     - makedirs: true
     - require:
       - pip: supervisor
@@ -31,20 +31,20 @@ supervisor:
 supervisor_confdir:
   file.directory:
     - name: {{ supervisor_confdir }}
-    - user: {{ saemref.instance.user }}
+    - user: {{ datalocale.instance.user }}
     - require:
-      - user: {{ saemref.instance.user }}
+      - user: {{ datalocale.instance.user }}
 
-/home/{{ saemref.instance.user }}/etc/supervisord.conf:
+/home/{{ datalocale.instance.user }}/etc/supervisord.conf:
   file.managed:
-    - source: salt://saemref/files/supervisord.conf
+    - source: salt://datalocale/files/supervisord.conf
     - template: jinja
-    - user: {{ saemref.instance.user }}
+    - user: {{ datalocale.instance.user }}
 
 
 /etc/init.d/supervisord:
   file.managed:
-    - source: salt://saemref/files/supervisord.init
+    - source: salt://datalocale/files/supervisord.init
     - template: jinja
     - mode: 755
 
@@ -66,10 +66,10 @@ supervisor_confdir:
 
 {{ supervisor_conffile }}:
   file.managed:
-    - source: salt://saemref/files/saemref-supervisor.conf
+    - source: salt://datalocale/files/datalocale-supervisor.conf
     - template: jinja
     {% if grains['os_family'] != 'Debian' %}
-    - user: {{ saemref.instance.user }}
+    - user: {{ datalocale.instance.user }}
     {% endif %}
     - require:
       - file: supervisor_confdir

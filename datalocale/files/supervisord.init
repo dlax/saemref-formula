@@ -1,5 +1,5 @@
-{% from "saemref/map.jinja" import saemref, supervisor_confdir with context %}
-{% set user = saemref.instance.user %}
+{% from "datalocale/map.jinja" import datalocale, supervisor_confdir with context %}
+{% set user = datalocale.instance.user %}
 {% set bindir = ['/home', user, '.local', 'bin']|join('/') %}
 {% set confdir = ['/home', user, 'etc']|join('/') %}
 #!/bin/bash

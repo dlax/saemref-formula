@@ -95,4 +95,4 @@ def test_datalocale_running(Process, Service, Socket, Command, is_centos6):
     assert Socket("tcp://0.0.0.0:8080").is_listening
 
     html = Command.check_output("curl http://localhost:8080")
-    assert "<title>accueil (Référentiel SAEM)</title>" in html
+    assert 'http://www.cubicweb.org' in html

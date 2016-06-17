@@ -49,9 +49,6 @@ def pytest_addoption(parser):
     parser.addoption(
         "--postgres-image", action="store", dest="postgres_image",
         help="postgres image to use in postgres tests")
-    parser.addoption(
-        "--upgrade-revision", action="store",
-        help="List of hg revision to test against (use 'master' for latest public changeset)")
 
 
 def pytest_generate_tests(metafunc):
@@ -76,11 +73,6 @@ def pytest_generate_tests(metafunc):
 
         metafunc.parametrize(
             "TestinfraBackend", images.split(","), indirect=True, scope=scope)
-    if 'saem_ref_upgrade_revision' in metafunc.fixturenames:
-        if not metafunc.config.option.upgrade_revision:
-            pytest.skip()
-        else:
-            metafunc.parametrize('saem_ref_upgrade_revision', [metafunc.config.option.upgrade_revision])
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-{% from "saemref/map.jinja" import saemref with context %}
+{% from "saemref/map.jinja" import saemref, venv, cubicweb_ctl with context %}
 
 include:
   - saemref.logilab-repo
@@ -41,9 +41,8 @@ dev dependencies:
     - name: setuptools
     - ignore_installed: true
 
-venv:
+{{ venv }}:
   virtualenv.managed:
-    - name: /home/{{ saemref.instance.user }}/venv
     - system_site_packages: true
     - user: {{ saemref.instance.user }}
     - require:
@@ -54,28 +53,28 @@ cubicweb in venv:
     - name: cubicweb
     - no_deps: true
     - ignore_installed: true
-    - bin_env: /home/{{ saemref.instance.user }}/venv
+    - bin_env: {{ venv }}
     - user: {{ saemref.instance.user }}
     - require:
-      - virtualenv: venv
+      - virtualenv: {{ venv }}
 
 cubicweb-saem_ref from hg:
   pip.installed:
     - name: hg+http://hg.logilab.org/review/cubes/saem_ref#egg=cubicweb-saem_ref
     - user: {{ saemref.instance.user }}
-    - bin_env: /home/{{ saemref.instance.user }}/venv
+    - bin_env: {{ venv }}
     - require:
       - pkg: dev dependencies
       - pip: dev dependencies
       - pip: cubicweb in venv
       - user: {{ saemref.instance.user }}
-      - virtualenv: venv
+      - virtualenv: {{ venv }}
 
 {% endif %}
 
 cubicweb-create:
   cmd.run:
-    - name: cubicweb-ctl create --no-db-create -a saem_ref {{ saemref.instance.name }}
+    - name: {{ cubicweb_ctl }} create --no-db-create -a saem_ref {{ saemref.instance.name }}
     - creates: /home/{{ saemref.instance.user }}/etc/cubicweb.d/{{ saemref.instance.name }}
     - user: {{ saemref.instance.user }}
     - env:

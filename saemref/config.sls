@@ -1,4 +1,4 @@
-{% from "saemref/map.jinja" import saemref with context %}
+{% from "saemref/map.jinja" import saemref, cubicweb_ctl with context %}
 
 include:
   - saemref.install
@@ -31,7 +31,7 @@ include:
     - source: salt://saemref/files/logrotate.conf
     - template: jinja
 
-CW_MODE=user cubicweb-ctl source-sync --loglevel error {{ saemref.instance.name }}:
+CW_MODE=user {{ cubicweb_ctl }} source-sync --loglevel error {{ saemref.instance.name }}:
   cron.present:
     - user: {{ saemref.instance.user }}
     - hour: "*/1"

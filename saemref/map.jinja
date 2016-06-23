@@ -33,3 +33,11 @@
 {% endif %}
 
 {% set is_docker_build = (salt['cmd.retcode']('/bin/sh -c "(readlink -f /sbin/init | grep -q systemd) && ! (readlink -f /proc/1/exe | grep systemd)"') == 0) %}
+
+{% set venv = ['/home', saemref.instance.user, 'venv']|join('/') %}
+
+{% if saemref.install.dev %}
+{% set cubicweb_ctl = [venv, 'bin', 'cubicweb-ctl']|join('/') %}
+{% else %}
+{% set cubicweb_ctl = 'cubicweb-ctl' %}
+{% endif %}

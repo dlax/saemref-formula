@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/logilab/datalocale-formula.svg?branch=master
-    :target: https://travis-ci.org/logilab/datalocale-formula
+.. image:: https://travis-ci.org/dlax/datalocale-formula.svg?branch=datalocale
+    :target: https://travis-ci.org/dlax/datalocale-formula
 
 ===============
 datalocale-formula

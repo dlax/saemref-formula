@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import sys
 
 import pytest
 
@@ -31,6 +32,8 @@ def test_migration(Salt, Command, dump):
 
     run(sucmd('{0}/cubicweb-ctl db-restore saemref /dumps/{1}'.format(bin_env, dump)))
     out = Command(sucmd('{0}/cubicweb-ctl upgrade -v 0 --force --backup-db=n saemref'.format(bin_env)))
+    print('\n** STDOUT:\n\n' + out.stdout.decode(sys.getdefaultencoding()))
+    print('\n** STDERR:\n\n' + out.stderr.decode(sys.getdefaultencoding()))
     # upgrade exit 0 even if a migration failed
     assert out.rc == 0
-    assert "-> instance migrated." in out.stdout, "STDOUT:\n\n%s\n\nSTDERR:\n\n%s" % (out.stdout, out.stderr)
+    assert "-> instance migrated." in out.stdout

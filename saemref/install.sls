@@ -54,14 +54,32 @@ venv:
     - require:
       - pkg: dev dependencies
 
-cubicweb-saem_ref from hg:
+{% set saemref_src = ['/home', saemref.instance.user, 'cubicweb-saem_ref']|join('/') %}
+cubicweb-saem_ref sources:
+  hg.latest:
+    - name: http://hg.logilab.org/review/cubes/saem_ref
+    - target: {{ saemref_src }}
+
+cubicweb-saem_ref dev dependencies:
   pip.installed:
-    - name: hg+http://hg.logilab.org/review/cubes/saem_ref#egg=cubicweb-saem_ref
+    - requirements: {{ saemref_src }}/dev-requirements.txt
     - user: {{ saemref.instance.user }}
     - bin_env: /home/{{ saemref.instance.user }}/venv
     - require:
       - user: {{ saemref.instance.user }}
       - virtualenv: venv
+      - hg: cubicweb-saem_ref sources
+
+cubicweb-saem_ref pip installed:
+  pip.installed:
+    - name: {{ saemref_src }}
+    - user: {{ saemref.instance.user }}
+    - bin_env: /home/{{ saemref.instance.user }}/venv
+    - require:
+      - user: {{ saemref.instance.user }}
+      - virtualenv: venv
+      - hg: cubicweb-saem_ref sources
+      - pip: cubicweb-saem_ref dev dependencies
 
 {% endif %}
 

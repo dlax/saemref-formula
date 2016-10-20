@@ -60,8 +60,6 @@ cubicweb-saem_ref from hg:
     - user: {{ saemref.instance.user }}
     - bin_env: /home/{{ saemref.instance.user }}/venv
     - require:
-      - pkg: dev dependencies
-      - pip: dev dependencies
       - user: {{ saemref.instance.user }}
       - virtualenv: venv
 

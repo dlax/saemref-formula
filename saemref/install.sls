@@ -35,11 +35,16 @@ dev dependencies:
   pkg.installed:
     - pkgs:
       - python-pip
-      - python-virtualenv
       - mercurial
+
+{% for pippkg in ('setuptools', 'pip', 'virtualenv') %}
+{{ pippkg }} pip installed:
   pip.installed:
-    - name: setuptools
+    - name: {{ pippkg }}
     - ignore_installed: true
+    - require_in:
+      - virtualenv: venv
+{% endfor %}
 
 venv:
   virtualenv.managed:

@@ -54,16 +54,6 @@ venv:
     - require:
       - pkg: dev dependencies
 
-cubicweb in venv:
-  pip.installed:
-    - name: cubicweb
-    - no_deps: true
-    - ignore_installed: true
-    - bin_env: /home/{{ saemref.instance.user }}/venv
-    - user: {{ saemref.instance.user }}
-    - require:
-      - virtualenv: venv
-
 cubicweb-saem_ref from hg:
   pip.installed:
     - name: hg+http://hg.logilab.org/review/cubes/saem_ref#egg=cubicweb-saem_ref
@@ -72,7 +62,6 @@ cubicweb-saem_ref from hg:
     - require:
       - pkg: dev dependencies
       - pip: dev dependencies
-      - pip: cubicweb in venv
       - user: {{ saemref.instance.user }}
       - virtualenv: venv
 

@@ -41,9 +41,9 @@ def is_centos6(SystemInfo):
 
 
 @pytest.mark.parametrize("name, version", [
-    ("cubicweb", "3.23.1"),
-    ("cubicweb-datalocale", "0.2.0"),
-    ("cubicweb-datacat", "0.8.3"),
+    ("cubicweb", "3.23.2"),
+    ("cubicweb-datalocale", "0.3.0"),
+    ("cubicweb-datacat", "0.8.5"),
 ])
 def test_packages(Package, name, version):
     pkg = Package(name)

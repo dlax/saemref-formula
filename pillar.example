@@ -8,6 +8,22 @@ datalocale:
       # Anonymous user
       anonymous_user: "john"
       anonymous_password: "secret"
+
+      # wsgi settings
+      # 2 * 8 = can handle 16 concurrent request
+      # and will use 16 database connections.
+      wsgi: true
+      wsgi_workers: 2
+      wsgi_threads: 8
+
+      # Secret keys for encrypting session/cookies data and authentication They
+      # are MANDATORY and should not be the same.
+      sessions_secret: SETME
+      authtk_session_secret: SETME1
+      authtk_persistent_secret: SETME2
+
+      # Pool size must be equal to wsgi_threads when using wsgi
+      pool_size: 8
     db:
       driver: postgres
       host: ""

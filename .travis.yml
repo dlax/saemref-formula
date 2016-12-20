@@ -8,6 +8,6 @@ env:
   matrix:
     - IMAGE=centos7
 install:
-  - pip install testinfra
+  - pip install -r test-requirements.txt
 script:
-  - ./run-tests.py test $IMAGE -v
+  - ./run-tests.py test $IMAGE -- -v

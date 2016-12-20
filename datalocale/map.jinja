@@ -18,14 +18,18 @@
 %}
 
 {% if grains['os_family'] == 'RedHat' %}
-	{% if grains['osmajorrelease'] == '6' %}
-		{% set supervisor_confdir = ['/home', datalocale.instance.user, 'etc', 'supervisor.d']|join('/') %}
-		{% set supervisor_conffile = [supervisor_confdir, 'datalocale.conf']|join('/') %}
-	{% else %}
-		{% set supervisor_confdir = '/etc/supervisord.d/' %}
-		{% set supervisor_conffile = [supervisor_confdir, 'datalocale.ini']|join('/') %}
-	{% endif %}
-{% else %}
-	{% set supervisor_confdir = '/etc/supervisor/conf.d' %}
-	{% set supervisor_conffile = [supervisor_confdir, 'datalocale.conf']|join('/') %}
+    {% if grains['osmajorrelease'] == '6' %}
+        {% set supervisor_confdir = ['/home', datalocale.instance.user, 'etc', 'supervisor.d']|join('/') %}
+        {% set supervisor_conffile = [supervisor_confdir, 'datalocale.conf']|join('/') %}
+    {% else %}
+        {% set supervisor_confdir = '/etc/supervisord.d/' %}
+        {% set supervisor_conffile = [supervisor_confdir, 'datalocale.ini']|join('/') %}
+    {% endif %}
+    {% set supervisor_service_name = 'supervisord' %}
+{% else %}{# Debian #}
+    {% set supervisor_confdir = '/etc/supervisor/conf.d' %}
+    {% set supervisor_conffile = [supervisor_confdir, 'datalocale.conf']|join('/') %}
+    {% set supervisor_service_name = 'supervisor' %}
 {% endif %}
+
+{% set is_docker_build = (salt['cmd.retcode']('/bin/sh -c "(readlink -f /sbin/init | grep -q systemd) && ! (readlink -f /proc/1/exe | grep systemd)"') == 0) %}

@@ -1,4 +1,4 @@
-{% from "datalocale/map.jinja" import datalocale, supervisor_confdir, supervisor_conffile with context %}
+{% from "datalocale/map.jinja" import datalocale, supervisor_confdir, supervisor_conffile, supervisor_service_name, is_docker_build with context %}
 
 include:
   - datalocale.install
@@ -75,6 +75,15 @@ supervisor_confdir:
       - file: supervisor_confdir
 
 supervisor-service-running:
+{% if is_docker_build %}
+{#
+Salt fail to enable a systemd service if systemd is not running (during the
+docker build phase) This is a workaround.
+#}
+  cmd.run:
+    - name: systemctl enable {{ supervisor_service_name }}
+{% else %}
   service.running:
-    - name: supervisord
+    - name: {{ supervisor_service_name }}
     - enable: true
+{% endif %}

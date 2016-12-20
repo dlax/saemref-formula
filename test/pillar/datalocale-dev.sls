@@ -1,0 +1,3 @@
+datalocale:
+  install:
+    dev: true

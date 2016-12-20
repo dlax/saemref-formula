@@ -1,6 +1,14 @@
 datalocale:
   instance:
-    base_url: http://{{ grains['ipv4'][1] }}:8080
+    {% for ip in grains['ipv4'] -%}
+    {% if ip != '127.0.0.1' -%}
+    base_url: http://{{ ip }}:8080
+    {% break %}
+    {% endif %}
+    {% endfor %}
+    sessions_secret: Polichinelle
+    authtk_session_secret: Polichinelle1
+    authtk_persistent_secret: Polichinelle2
   db:
     driver: sqlite
     name: /home/datalocale/datalocale.db

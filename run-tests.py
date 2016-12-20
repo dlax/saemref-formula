@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
-import sys
+import click
 import os
-import argparse
 import subprocess
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 _formula = "datalocale"
-_images = ["centos6", "centos7"]
 
 
 def get_tag(image, salt=False):
@@ -31,57 +29,86 @@ def image_exists(image):
         raise RuntimeError("Cannot test if image exists")
 
 
-def _build(image, salt=False):
+image_option = click.argument("image", type=click.Choice(["centos6", "centos7", "jessie"]))
+salt_option = click.option('--salt', is_flag=True, help="Run salt highstate")
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command(help="Build a container")
+@image_option
+@salt_option
+@click.option('--tag', default=None, help="Custom tag name for the built docker image")
+@click.option('--file-root', type=click.Path(exists=True), default='test/salt')
+@click.option('--pillar-root', type=click.Path(exists=True), default='test/pillar')
+@click.option('--log-level', type=click.Choice(['debug', 'info', 'warning', 'error']),
+              default='info')
+def build(image, salt, tag, file_root, pillar_root, log_level):
     dockerfile = "test/{0}.Dockerfile".format(image)
-    tag = get_tag(image, salt)
     if salt:
-        dockerfile_content = open(dockerfile, "rb").read()
+        dockerfile_content = open(dockerfile, "r").read()
         dockerfile_content += (
-            b"\n"
-            b"ADD test/minion.conf /etc/salt/minion.d/minion.conf\n"
-            b"ADD test/salt /srv/salt\n"
-            b"ADD test/pillar /srv/pillar\n"
-            b"ADD {0} /srv/formula/{0}\n"
-            b"RUN salt-call --hard-crash -l debug state.highstate\n"
-        ).format(_formula)
-        if image in ("centos7",):
-            # Salt fail to enable a systemd service if systemd is not running
-            # (during the docker build phase)
-            # This is a workaround.
-            dockerfile_content += b"RUN systemctl enable supervisord\n"
+            "\n"
+            "ADD test/minion.conf /etc/salt/minion.d/minion.conf\n"
+            "ADD %(file_root)s /srv/salt\n"
+            "ADD %(pillar_root)s /srv/pillar\n"
+            "ADD %(formula)s /srv/formula/%(formula)s\n"
+            "RUN salt-call --hard-crash --retcode-passthrough -l %(log_level)s state.highstate\n"
+        ) % {
+            "file_root": file_root,
+            "pillar_root": pillar_root,
+            "formula": _formula,
+            "log_level": log_level,
+        }
         dockerfile = os.path.join("test", "{0}_salted.Dockerfile".format(image))
         with open(dockerfile, "wb") as fd:
-            fd.write(dockerfile_content)
+            fd.write(dockerfile_content.encode())
+
+    if tag is None:
+        tag = get_tag(image, salt)
     subprocess.check_call([
         "docker", "build", "-t", tag, "-f", dockerfile, ".",
     ])
 
 
-def build(args, remain):
-    _build(args.image, args.salt)
-
-
-def test(args, remain):
-    tag = get_tag(args.image, True)
-    _build(args.image, True)
+@cli.command(
+    help="Build a salted (highstate) container and run tests on it",
+    context_settings={"allow_extra_args": True},
+)
+@click.pass_context
+@image_option
+def test(ctx, image):
+    tag = get_tag(image, True)
+    if not image_exists(tag):
+        ctx.invoke(build, image=image, salt=True, log_level='debug')
+    postgres_tag = get_tag("postgres", False)
+    if not image_exists(postgres_tag):
+        ctx.invoke(build, image="postgres", salt=False)
 
     import pytest
-    return pytest.main(["--docker-image", tag] + remain)
+    ctx.exit(pytest.main(["--docker-image", tag, "--postgres-image", postgres_tag] + ctx.args))
 
 
-def dev(args, remain):
-    tag = get_tag(args.image, args.salt)
+@cli.command(help="Run a container and spawn an interactive shell inside")
+@click.pass_context
+@image_option
+@salt_option
+def dev(ctx, image, salt):
+    tag = get_tag(image, salt)
     if not image_exists(tag):
-        _build(args.image, args.salt)
+        ctx.invoke(build, image=image, salt=salt)
     cmd = [
-        "docker", "run", "-d", "--hostname", args.image,
+        "docker", "run", "-d", "--hostname", image,
         "-v", "{0}/test/minion.conf:/etc/salt/minion.d/minion.conf".format(BASEDIR),
         "-v", "{0}/test/salt:/srv/salt".format(BASEDIR),
         "-v", "{0}/test/pillar:/srv/pillar".format(BASEDIR),
         "-v", "{0}/{1}:/srv/formula/{1}".format(BASEDIR, _formula),
     ]
 
-    if args.image in ("centos7",):
+    if image in ("centos7", "jessie"):
         # Systemd require privileged container
         cmd.append("--privileged")
     cmd.append(tag)
@@ -96,22 +123,4 @@ def dev(args, remain):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Test {0} formula in docker".format(_formula))
-    subparsers = parser.add_subparsers(help="sub-command help")
-
-    parser_build = subparsers.add_parser("build", help="build images")
-    parser_build.add_argument("image", choices=_images)
-    parser_build.add_argument("--salt", action="store_true")
-    parser_build.set_defaults(func=build)
-
-    parser_dev = subparsers.add_parser("dev", help="drop a shell in dev container")
-    parser_dev.add_argument("image", choices=_images)
-    parser_dev.add_argument("--salt", action="store_true")
-    parser_dev.set_defaults(func=dev)
-
-    parser_test = subparsers.add_parser("test", help="provision a container and run tests on it")
-    parser_test.add_argument("image", choices=_images)
-    parser_test.set_defaults(func=test)
-
-    args, remain = parser.parse_known_args()
-    sys.exit(args.func(args, remain))
+    cli()

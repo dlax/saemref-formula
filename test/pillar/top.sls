@@ -1,4 +1,3 @@
 base:
   '*':
     - datalocale
-    - datalocale-dev

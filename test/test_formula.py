@@ -20,10 +20,15 @@ def test_package_postgresclient(Package, SystemInfo):
     assert pkg.version.startswith("9.4")
 
 
-def test_package_saem_ref(Package):
-    cube = Package("cubicweb-saem-ref")
-    assert cube.is_installed
-    assert cube.version.startswith("0.13.1")
+@pytest.mark.parametrize("name, version", [
+    ("cubicweb", "3.23.2"),
+    ("cubicweb-datalocale", "0.3.0"),
+    ("cubicweb-datacat", "0.8.5"),
+])
+def test_package_install(Package, name, version):
+    pkg = Package(name)
+    assert pkg.is_installed
+    assert pkg.version.startswith(version)
 
 def test_package_cubicweb(Package, SystemInfo):
     if SystemInfo.distribution == "centos":

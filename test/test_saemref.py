@@ -71,13 +71,6 @@ def test_pillars(host):
     pillars = host.salt("pillar.items")
     expected = {
         'admin': {'login': 'admin', 'pass': 'admin'},
-        'db': {
-            'driver': 'sqlite',
-            'host': '',
-            'name': '/home/saemref/saemref.db',
-            'pass': 'saemref',
-            'port': '',
-            'user': 'saemref'},
         'install': {'dev': True},
         'instance': {
             'anonymous_password': 'anon',

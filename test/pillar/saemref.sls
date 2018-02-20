@@ -13,6 +13,3 @@ saemref:
       authtk_persistent_secret: Polichinelle2
       anonymous_user: anon
       anonymous_password: anon
-    db:
-      driver: sqlite
-      name: /home/saemref/saemref.db

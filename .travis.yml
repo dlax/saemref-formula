@@ -10,4 +10,6 @@ env:
 install:
   - pip install -r test-requirements.txt
 script:
+  - ./run-tests.py build_test_images $IMAGE
+  - ./run-tests.py dev --salt --postgres $IMAGE -- salt-call -l debug --hard-crash --retcode-passthrough state.sls saemref.db-create
   - ./run-tests.py test $IMAGE -- -v

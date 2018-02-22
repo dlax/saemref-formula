@@ -82,18 +82,28 @@ def build(image, salt, tag, file_root, pillar_root, log_level):
 
 
 @cli.command(
-    help="Build a salted (highstate) container and run tests on it",
-    context_settings={"allow_extra_args": True},
+    help="Build container images for tests",
 )
 @click.pass_context
 @image_option
-def test(ctx, image):
+def build_test_images(ctx, image):
     tag = get_tag(image, True)
     if not image_exists(tag):
         ctx.invoke(build, image=image, salt=True, log_level='debug')
     postgres_tag = get_tag("postgres", False)
     if not image_exists(postgres_tag):
         ctx.invoke(build, image="postgres", salt=False)
+    return tag, postgres_tag
+
+
+@cli.command(
+    help="Build a salted (highstate) container and run tests on it",
+    context_settings={"allow_extra_args": True},
+)
+@click.pass_context
+@image_option
+def test(ctx, image):
+    tag, postgres_tag = ctx.invoke(build_test_images)
 
     import pytest
     ctx.exit(pytest.main(["--docker-image", tag, "--postgres-image", postgres_tag] + ctx.args))
